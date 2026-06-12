@@ -1,0 +1,65 @@
+services:
+  
+  mysql:
+    image: mysql:9.7.0
+    container_name: mysql
+    restart: unless-stopped # W razie błędów kontener będzie się uruchamiał ponowanie, do póki go nie zatrzymamy ręcznie
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_password #Hasło dostępowe do roota jest przekazywane z użyciem secrets
+    secrets:
+      - db_password
+    volumes:
+      - mysql-data:/var/lib/mysql # Nazwany wolumen do przechowywania zawartości baz danych
+    networks:
+      - back
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 3s     
+      timeout: 5s      
+      retries: 3 
+
+  php:
+    build: .
+    container_name: php
+    restart: unless-stopped
+    secrets:
+      - db_password # Aplikacja też potrzebuje hasła aby połączyć się z mysql
+    volumes:
+      - ./html:/var/www/html # Pliki źródłowe "aplikacji"
+    networks:
+      - back
+    depends_on:
+      - mysql # Definiujemy zależności pomiędzy aplikacjami, zanim uruchomi się backend, wypadałoby uruchomić BD.
+
+  nginx:
+    image: nginx:1.31.1-alpine
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./html:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # Konfiguracja nginx
+    networks:
+      - front
+      - back
+    ports:
+      - 8000:80
+    expose:
+      - 8000 # Informacja o przekierowaniu portów do dokumentacji
+    depends_on:
+    - php
+
+volumes:
+  mysql-data: 
+
+networks:
+  
+  front:
+    driver: bridge
+  
+  back:
+    driver: bridge
+    internal: true # Kontenery z tej sieci nie mogą się komunikować ze światem zewnętrzym (host nie tworzy reguł NAT dla tej sieci)
+
+secrets:
+  db_password:
+    file: ./db_password.txt
