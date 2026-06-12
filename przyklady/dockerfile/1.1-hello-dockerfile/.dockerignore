@@ -1,0 +1,3 @@
+# Tutaj umieszczamy pliki, które chcemy aby builder pominął w trakcie budowania obrazu 
+
+jakas_konfiguracja.conf
