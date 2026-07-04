@@ -67,5 +67,40 @@ Do zarządzania obrazami służy polecenie **docker image**. Znaczna część ty
     ```bash
     docker rmi alpine:3.24.1
     ```
+## 4. Zarządzanie kontenerami
+Schemat przedstawiający cykl życia kontenera:
+
+```text
+                  +-------------------------+
+                  |        [ Obraz ]        |
+                  +-------------------------+
+                       |                 |
+                       |                 | docker create
+                       |                 v
+                       |           +-------------------+
+                       |           |      Stopped      |
+                       |           +-------------------+
+                       |                 |
+                       | docker run      | docker start
+                       |                 |  
+                       v                 v      docker pause 
+            +---- +-------------------------+ ---------------> +-------------------+
+            |     |         Running         |                  |      Paused       |
+            |     +-------------------------+ <--------------- +-------------------+
+            |        |      |             ^    docker unpause
+    --rm    |        |      |             |
+            |        | *    | docker stop | docker start
+            |        |      | docker kill |
+            |        v      v             |
+            |     +-------------------------+
+            |     |         Stopped         |
+            |     +-------------------------+
+            |          |
+            |          | docker rm
+            v          v
+            +---> +-------------------------+
+                  |         Deleted         |
+                  +-------------------------+
+```
 
 # C.D.N.
