@@ -34,4 +34,38 @@ Obrazy pobierane są z rejestru obrazów. Domyślnym rejestrem jest *[DockerHub]
 Swoje rejestry posiadają m.in. duże organizacje jak np. GitHub (GHCR) i Oracle (OCR). 
 Możemy także utworzyć swój prywatny rejestr, ale to jeszcze nie teraz.
 
+Do zarządzania obrazami służy polecenie **docker image**. Znaczna część tych poleceń ma swoją skróconą formę, co jest charakterystyczne dla CLI Dockera. 
+
+### Przykłady wykorzystania:
+
+* **Pobieranie obrazu z rejestru.**
+    W poleceniu podajemy nazwę rejestru, nazwę obrazu (repozytorium) oraz tag (wersję obrazu):
+    ```bash
+    docker image pull docker.io/ubuntu:latest
+    ```
+    W tym poleceniu możemy pominąć słowo kluczowe image, dodatkowo jeśli korzystamy z rejestru DockerHub i tagu (`latest`), możemy pominąć te wartości:
+    ```bash
+    docker pull ubuntu
+    ```
+
+* **Wyświetlanie pobranych obrazów.**
+    Pokazuje listę obrazów dostępnych lokalnie na maszynie wraz z ich rozmiarami i identyfikatorami.
+    ```bash
+    docker image ls
+    ```
+    Wersja skrócona:
+    ```bash
+    docker images
+    ```
+
+* **Usuwanie obrazu.**
+    Pozwala usunąć lokalny obraz, podając jego nazwę (unikalną, ew. z rejestrem i tagiem) lub ID. Obraz nie może być używany przez żaden (nawet zatrzymany) kontener.
+    ```bash
+    docker image rm alpine:3.24.1
+    ```
+    Wersja skrócona:
+    ```bash
+    docker rmi alpine:3.24.1
+    ```
+
 # C.D.N.
