@@ -70,37 +70,28 @@ Do zarządzania obrazami służy polecenie **docker image**. Znaczna część ty
 ## 4. Zarządzanie kontenerami
 Schemat przedstawiający cykl życia kontenera:
 
-```text
-                  +-------------------------+
-                  |        [ Obraz ]        |
-                  +-------------------------+
-                       |                 |
-                       |                 | docker create
-                       |                 v
-                       |           +-------------------+
-                       |           |      Stopped      |
-                       |           +-------------------+
-                       |                 |
-                       | docker run      | docker start
-                       |                 |  
-                       v                 v      docker pause 
-            +---- +-------------------------+ ---------------> +-------------------+
-            |     |         Running         |                  |      Paused       |
-            |     +-------------------------+ <--------------- +-------------------+
-            |        |      |             ^    docker unpause
-    --rm    |        |      |             |
-            |        | *    | docker stop | docker start
-            |        |      | docker kill |
-            |        v      v             |
-            |     +-------------------------+
-            |     |         Stopped         |
-            |     +-------------------------+
-            |          |
-            |          | docker rm
-            v          v
-            +---> +-------------------------+
-                  |         Deleted         |
-                  +-------------------------+
+```mermaid
+graph TD
+    classDef startEnd fill:#fff,stroke:#000,stroke-width:2px,shape:doublecircle;
+    classDef state fill:#fff,stroke:#000,stroke-width:2px,rx:15,ry:15;
+
+    Start(( )):::startEnd
+    Stopped[Stopped]:::state
+    Running[Running]:::state
+    Paused[Paused]:::state
+    Dead[Dead]:::state
+
+    Start -->|run| Running
+    Start -.->|create| Stopped
+    
+    Stopped -.->|start| Running
+    Stopped -->|rm| Dead
+    
+    Running -->|stop| Stopped
+    Running -->|kill| Stopped
+    
+    Running -.->|pause| Paused
+    Paused -.->|unpause| Running
 ```
 
 # C.D.N.
