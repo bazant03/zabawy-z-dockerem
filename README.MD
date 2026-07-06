@@ -68,7 +68,9 @@ Do zarządzania obrazami służy polecenie **docker image**. Znaczna część ty
     docker rmi alpine:3.24.1
     ```
 ## 4. Zarządzanie kontenerami
-Schemat przedstawiający cykl życia kontenera:
+Do zarządzania kontenerami służą polecenia z grupy docker container. Podczas wykonywania poleceń przedstawionych poniżej można pominąć słowo kluczowe container.  
+
+Zanim omówimy te polecenia, wypadałoby przyjrzeć się schematowi przedstawiającemu cykl życia kontenera:
 
 ```mermaid
 graph TD
@@ -82,16 +84,28 @@ graph TD
     Dead[Dead]:::state
 
     Start -->|run| Running
-    Start -.->|create| Stopped
+    Start -->|create| Stopped
     
-    Stopped -.->|start| Running
+    Stopped -->|start| Running
     Stopped -->|rm| Dead
     
     Running -->|stop| Stopped
     Running -->|kill| Stopped
     
-    Running -.->|pause| Paused
-    Paused -.->|unpause| Running
+    Running -->|pause| Paused
+    Paused -->|unpause| Running
 ```
+
+Choć z początku może to wyglądać nieco skomplikowanie jest to dosyć proste. Przeanalizujmy diagram po kolei. 
+
+Aby uruchomić kontener należy wykonać polecenie **docker run** (skrócone docker **container** run). Gdy wszystkie procesy w uruchomionym kontenerze się zakończą przejdzie on ze stanu **Running** do **Stopped**, jednak domyślnie nie zostanie on automatycznie usunięty, Docker wciąż będzie przechowywał jego dane w pamięci, takie jak id, nazwa (kontenera), nazwa jego obrazu itp...
+W tej sytuacji możemy usunąć kontener na dobre poleceniem **docker rm** lub uruchomić go ponownie z użyciem **docker start**.
+
+Polecenie **docker create** tworzy kontener ale go nie uruchamia, jak powyżej, można go wtedy włączyć poprzez **docker start**.
+
+W przypadku gdy chcemy ręcznie zatrzymać pracę kontenera, możemy użyć polecenia **docker stop** lub **docker kill**.
+Różnica polega na tym jaki sygnał zostanie wysłany do procesu/ów kontenera. W przypadku **docker stop** będzie to **SIGTERM**, który pozwoli na ewentualne obsłużenie tego sygnału przez proces (graceful shutdown). W przypadku **docker kill**, jak można się domyśleć zostanie wysłany sygnał **SIGKILL**, co będzie skutkowało bezwarunkowym ubiciem procesów.
+
+Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim procesów i wyczyszczeniem ich pamięci. "Zapauzowanie" kontenera z użyciem **docker pause** powoduje jedynie zatrzymanie wykonywania procesów kontenera, zamiast ich całkowitego usunięcia. Po wznowieniu ich z użyciem **docker unpause** pracują one z powrotem z zachowaniem ich stanu przed zapauzowaniem.  
 
 # C.D.N.
