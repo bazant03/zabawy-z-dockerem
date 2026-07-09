@@ -108,4 +108,25 @@ Różnica polega na tym jaki sygnał zostanie wysłany do procesu/ów kontenera.
 
 Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim procesów i wyczyszczeniem ich pamięci. "Zapauzowanie" kontenera z użyciem **docker pause** powoduje jedynie zatrzymanie wykonywania procesów kontenera, zamiast ich całkowitego usunięcia. Po wznowieniu ich z użyciem **docker unpause** pracują one z powrotem z zachowaniem ich stanu przed zapauzowaniem.  
 
+### Przykłady
+
+* **Uruchomienie kontenera w trybie interaktywnym.**
+    Flagi -i oraz -t odpowiadają kolejno za włączenie trybu interaktywnego i podłączenie pseudo-terminala do kontenera, co pozwala na wykonywanie poleceń powłoki wewnątrz kontenera. Kontener będzie miał nazwę "first" i zostanie utworzony na bazie obrazu ubuntu:26.04. Programem jaki zostanie w nim uruchomiony będzie /bin/bash, czyli powłoka.
+    ```bash
+    docker run -it --name first ubuntu:26.04 /bin/bash
+    ```  
+
+* **Uruchomienie kontenera w tle.**
+    Flaga -d oznacza, że nie chcemy aby na naszej konsoli były wyświetlane komunikaty procesów kontenera. Flaga --rm natomiast, powoduje automatyczne usunięcie kontenera gdy przejdzie on do stanu **Stopped**, np. po zakończeniu pracy procesów lub ręcznym zatrzymaniu. 
+    W sytuacji gdy nie podamy nazwy kontenera, zostanie ona wylosowana z pewnego zbioru przymiotników i rzeczowników.
+    ```bash
+    docker run -d --rm ubuntu sleep 3600
+    ```
+
+* **Wykonywanie poleceń z zewnątrz/wewnątrz kontenera (Zależy jak spojrzeć).**
+    Aby móc wydawać polecenia wewnątrz kontenera nie musimy być z nim połączeni cały czas poprzez terminal (tryb interaktywny). Z użyciem docker exec możemy wykonać wybrane polecenia wewnątrz kontenera który jest uruchomiony w tle. Podajemy nazwę kontenera a następnie komendę jaką chcemy w nim wykonać.
+    ```bash
+    docker exec podgladany ls -l
+    ```
+
 # C.D.N.
