@@ -98,7 +98,7 @@ graph TD
 
 Choć z początku może to wyglądać nieco skomplikowanie jest to dosyć proste. Przeanalizujmy diagram po kolei. 
 
-Aby uruchomić kontener należy wykonać polecenie **docker run** (skrócone docker **container** run). Gdy wszystkie procesy w uruchomionym kontenerze się zakończą przejdzie on ze stanu **Running** do **Stopped**, jednak domyślnie nie zostanie on automatycznie usunięty, Docker wciąż będzie przechowywał jego dane w pamięci, takie jak id, nazwa (kontenera), nazwa jego obrazu itp...
+Aby uruchomić kontener należy wykonać polecenie **docker run** (skrócone docker **container** run). Gdy wszystkie procesy w uruchomionym kontenerze się zakończą przejdzie on ze stanu **Running** do **Stopped**, jednak domyślnie nie zostanie on automatycznie usunięty, Docker wciąż będzie przechowywał jego dane w pamięci, takie jak ID, nazwa (kontenera), nazwa jego obrazu itp...
 W tej sytuacji możemy usunąć kontener na dobre poleceniem **docker rm** lub uruchomić go ponownie z użyciem **docker start**.
 
 Polecenie **docker create** tworzy kontener ale go nie uruchamia, jak powyżej, można go wtedy włączyć poprzez **docker start**.
@@ -122,6 +122,19 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```bash
     docker run -d --rm ubuntu sleep 3600
     ```
+
+* **Utworzenie kontenera bez uruchamiania.**
+    Jak wiemy, możemy to zrealizować z użyciem **docker create**. W poniższym przykładzie tworzymy kontener, z którym będziemy mogli się połączyć poprzez terminal. 
+    ```bash
+    docker create -it --name rezerwowy ubuntu:26.04 /bin/bash
+    ```
+
+* **Uruchomienie poprzednio utworzonego kontenera i jedna uwaga.** 
+    Idąc powyższym tokiem myślenia, chcąc uruchomić kontener w tle, zamiast -it użyjemy flagi -d. I tutaj pojawia się problem, ponieważ **docker create** nie posiada takiej opcji.
+    Uruchomienie kontenera w tle ma sens dla polecenia **run**, ponieważ jak wiemy może ono również wyświetlać dane wyjściowe z kontenera. W przypadku **create** nie ma to sensu, ponieważ utworzony kontener musimy następnie uruchomić poprzez **docker start**, a to polecenie zwraca tylko nazwę kontenera (lub jego ID w zależności jak się do niego odwołamy), nie wyświetla ono żadnych komunikatów z wewnątrz tego kontenera.
+    ```bash
+    docker start rezerwowy
+    ```  
 
 * **Wykonywanie poleceń z zewnątrz/wewnątrz kontenera (Zależy jak spojrzeć).**
     Aby móc wydawać polecenia wewnątrz kontenera nie musimy być z nim połączeni cały czas poprzez terminal (tryb interaktywny). Z użyciem docker exec możemy wykonać wybrane polecenia wewnątrz kontenera który jest uruchomiony w tle. Podajemy nazwę kontenera a następnie komendę jaką chcemy w nim wykonać.
