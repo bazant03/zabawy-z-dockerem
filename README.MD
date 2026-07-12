@@ -136,10 +136,40 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     docker start rezerwowy
     ```  
 
+* **Zarządznie kontenerami - reszta poleceń.**
+    Pozostałe polecenia do zarządzania cyklem życia kontenera, wymienione na diagramie są używane poprzez odwołanie się do nazwy lub ID kontenera.<br>
+    Zatrzymanie kontenera:
+    ```bash
+    docker stop rezerwowy
+    ```
+    Odpauzowanie kontenera (ID):
+    ```bash
+    docker unpause ed559ec53380
+    ```
+
 * **Wykonywanie poleceń z zewnątrz/wewnątrz kontenera (Zależy jak spojrzeć).**
     Aby móc wydawać polecenia wewnątrz kontenera nie musimy być z nim połączeni cały czas poprzez terminal (tryb interaktywny). Z użyciem docker exec możemy wykonać wybrane polecenia wewnątrz kontenera który jest uruchomiony w tle. Podajemy nazwę kontenera a następnie komendę jaką chcemy w nim wykonać.
     ```bash
     docker exec podgladany ls -l
+    ```
+
+* **Wyświetlanie kontenerów.**
+    W tym celu możemy wykorzystać polecenie **docker ps**, alternatywnie możemy użyć **docker container ls** które jest aliasem do **ps** (nie jedynym), przyczym pierwsza opcja jest częściej używana. Flaga **-a** powoduje wyświetlenie wszystkich utworzonych (nieusuniętych) kontenerów, pominięcie jej wyświetli tylko pracujące (Running).
+    ```bash
+    docker ps -a
+    ```
+
+* **Wyświetlanie procesów.**
+    Polecenie **docker top** pozwala wyśwtielić informacje o procesach wewnątrz danego kontenera z perspektywy systemu operacyjnego.
+    W stosunku do perspektywy z wewnątrz różnicę będzie widać m.in. w numerach PID.
+    ```bash
+    docker top podgladany
+    ```
+
+* **Wykorzystanie zasobów.**
+    Polecenie **docker stats** wyświetla podstawowe informacje o zasobach wykorzytywanych przez poszczególne kontenery, takich jak np. czas procesora i wykorzystanie pamięci RAM. Gdy podamy nazwę kontenera, zobaczymy statystyki tylko dla niego.
+    ```bash
+    docker stats
     ```
 
 # C.D.N.
