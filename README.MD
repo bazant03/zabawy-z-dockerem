@@ -67,7 +67,7 @@ Do zarządzania obrazami służy polecenie **docker image**. Znaczna część ty
     ```bash
     docker rmi alpine:3.24.1
     ```
-## 4. Zarządzanie kontenerami
+## 4. Zarządzanie kontenerami i środowiskiem
 Do zarządzania kontenerami służą polecenia z grupy docker container. Podczas wykonywania poleceń przedstawionych poniżej można pominąć słowo kluczowe container.  
 
 Zanim omówimy te polecenia, wypadałoby przyjrzeć się schematowi przedstawiającemu cykl życia kontenera:
@@ -108,10 +108,10 @@ Różnica polega na tym jaki sygnał zostanie wysłany do procesu/ów kontenera.
 
 Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim procesów i wyczyszczeniem ich pamięci. "Zapauzowanie" kontenera z użyciem **docker pause** powoduje jedynie zatrzymanie wykonywania procesów kontenera, zamiast ich całkowitego usunięcia. Po wznowieniu ich z użyciem **docker unpause** pracują one z powrotem z zachowaniem ich stanu przed zapauzowaniem.  
 
-### Przykłady
+### Cykl życia i zarządzanie kontenerami
 
 * **Uruchomienie kontenera w trybie interaktywnym.**
-    Flagi -i oraz -t odpowiadają kolejno za włączenie trybu interaktywnego i podłączenie pseudo-terminala do kontenera, co pozwala na wykonywanie poleceń powłoki wewnątrz kontenera. Kontener będzie miał nazwę "first" i zostanie utworzony na bazie obrazu ubuntu:26.04. Programem jaki zostanie w nim uruchomiony będzie /bin/bash, czyli powłoka.
+    Flagi -i oraz -t odpowiadają kolejno za włączenie trybu interaktywnego i podłączenie pseudo-terminala do kontenera, co pozwala na wykonywanie poleceń powłoki wewnątrz kontenera. Kontener będzie miał nazwę "first" i zostanie utworzony na bazie obrazu ubuntu:26.04. Programem jaki zostanie w nim uruchomiony będzie /bin/bash, czyli powłoka.
     ```bash
     docker run -it --name first ubuntu:26.04 /bin/bash
     ```  
@@ -124,20 +124,19 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```
 
 * **Utworzenie kontenera bez uruchamiania.**
-    Jak wiemy, możemy to zrealizować z użyciem **docker create**. W poniższym przykładzie tworzymy kontener, z którym będziemy mogli się połączyć poprzez terminal. 
+    Jak wiemy, możemy to zrealizować z użyciem **docker create**. W poniższym przykładzie tworzymy kontener, z którym będziemy mogli się połączyć poprzez terminal. 
     ```bash
     docker create -it --name rezerwowy ubuntu:26.04 /bin/bash
     ```
 
-* **Uruchomienie poprzednio utworzonego kontenera i jedna uwaga.** 
-    Idąc powyższym tokiem myślenia, chcąc uruchomić kontener w tle, zamiast -it użyjemy flagi -d. I tutaj pojawia się problem, ponieważ **docker create** nie posiada takiej opcji.
+* **Uruchomienie poprzednio utworzonego kontenera i jedna uwaga.** Idąc powyższym tokiem myślenia, chcąc uruchomić kontener w tle, zamiast -it użyjemy flagi -d. I tutaj pojawia się problem, ponieważ **docker create** nie posiada takiej opcji.
     Uruchomienie kontenera w tle ma sens dla polecenia **run**, ponieważ jak wiemy może ono również wyświetlać dane wyjściowe z kontenera. W przypadku **create** nie ma to sensu, ponieważ utworzony kontener musimy następnie uruchomić poprzez **docker start**, a to polecenie zwraca tylko nazwę kontenera (lub jego ID w zależności jak się do niego odwołamy), nie wyświetla ono żadnych komunikatów z wewnątrz tego kontenera.
     ```bash
     docker start rezerwowy
     ```  
 
 * **Zarządznie kontenerami - reszta poleceń.**
-    Pozostałe polecenia do zarządzania cyklem życia kontenera, wymienione na diagramie są używane poprzez odwołanie się do nazwy lub ID kontenera.<br>
+    Pozostałe polecenia do zarządzania cyklem życia kontenera, wymienione na diagramie są używane poprzez odwołanie się do nazwy lub ID kontenera.<br>
     Zatrzymanie kontenera:
     ```bash
     docker stop rezerwowy
@@ -148,13 +147,15 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```
 
 * **Wykonywanie poleceń z zewnątrz/wewnątrz kontenera (Zależy jak spojrzeć).**
-    Aby móc wydawać polecenia wewnątrz kontenera nie musimy być z nim połączeni cały czas poprzez terminal (tryb interaktywny). Z użyciem docker exec możemy wykonać wybrane polecenia wewnątrz kontenera który jest uruchomiony w tle. Podajemy nazwę kontenera a następnie komendę jaką chcemy w nim wykonać.
+    Aby móc wydawać polecenia wewnątrz kontenera nie musimy być z nim połączeni cały czas poprzez terminal (tryb interaktywny). Z użyciem docker exec możemy wykonać wybrane polecenia wewnątrz kontenera który jest uruchomiony w tle. Podajemy nazwę kontenera a następnie komendę jaką chcemy w nim wykonać.
     ```bash
     docker exec podgladany ls -l
     ```
 
+### Monitorowanie kontenerów i procesów
+
 * **Wyświetlanie kontenerów.**
-    W tym celu możemy wykorzystać polecenie **docker ps**, alternatywnie możemy użyć **docker container ls** które jest aliasem do **ps** (nie jedynym), przyczym pierwsza opcja jest częściej używana. Flaga **-a** powoduje wyświetlenie wszystkich utworzonych (nieusuniętych) kontenerów, pominięcie jej wyświetli tylko pracujące (Running).
+    W tym celu możemy wykorzystać polecenie **docker ps**, alternatywnie możemy użyć **docker container ls** które jest aliasem do **ps** (nie jedynym), przyczym pierwsza opcja jest częściej używana. Flaga **-a** powoduje wyświetlenie wszystkich utworzonych (nieusuniętych) kontenerów, pominięcie jej wyświetli tylko pracujące (Running).
     ```bash
     docker ps -a
     ```
@@ -171,6 +172,9 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```bash
     docker stats
     ```
+
+### Zarządzanie i monitorowanie zasobów systemowych Docker
+
 * **Wykorzystanie dysku.**
     Jak już mogliśmy zauważyć, wiele poleceń z CLI Dockera nawiązuje do nazw linuxowych coreutils. Nie inaczej jest w tym przypadku. Polecenie **docker df** pokazuje wykorzystanie przestrzeni dyskowej przez środowisko Docker.
     ```bash
@@ -178,9 +182,9 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```
 
 * **Zwalnianie miejsca.**
-    W sytuacji gdy chcemy posprzątać nasz system poprzez usunięcie nieużywanych obrazów i zatrzymanych konterów oraz paru innych rodzajów danych o których jeszcze zdążymy wspomnieć.
+    W sytuacji gdy chcemy posprzątać nasz system poprzez usunięcie nieużywanych obrazów i zatrzymanych konterów oraz paru innych rodzajów danych o których jeszcze zdążymy wspomnieć.
     ```bash
-    docker system prunne
+    docker system prune
     ```
 
 # C.D.N.
