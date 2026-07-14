@@ -171,5 +171,16 @@ Zatrzymanie kontenera (przejście do stanu **Stopped**) skutkuje zakończenim pr
     ```bash
     docker stats
     ```
+* **Wykorzystanie dysku.**
+    Jak już mogliśmy zauważyć, wiele poleceń z CLI Dockera nawiązuje do nazw linuxowych coreutils. Nie inaczej jest w tym przypadku. Polecenie **docker df** pokazuje wykorzystanie przestrzeni dyskowej przez środowisko Docker.
+    ```bash
+    docker system df
+    ```
+
+* **Zwalnianie miejsca.**
+    W sytuacji gdy chcemy posprzątać nasz system poprzez usunięcie nieużywanych obrazów i zatrzymanych konterów oraz paru innych rodzajów danych o których jeszcze zdążymy wspomnieć.
+    ```bash
+    docker system prunne
+    ```
 
 # C.D.N.
